@@ -75,7 +75,7 @@ export function Navbar() {
         <div className="flex-grow md:max-w-md">
           <input
             type="text"
-            placeholder="SP..."
+            placeholder="your address wallet here SP..."
             className="w-full rounded-lg bg-gray-700 px-4 py-2 text-sm"
             value={searchAddress}
             onChange={(e) => setSearchAddress(e.target.value)}
