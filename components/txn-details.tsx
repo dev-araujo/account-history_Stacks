@@ -17,15 +17,12 @@ interface TransactionDetailProps {
   result: FetchAddressTransactionsResponse["results"][number];
 }
 
-// Each component will display the following pieces of information
-// that will vary depending on the type of transaction
 type TransactionInformationByType = {
   primaryTitle: string;
   secondaryTitle: string;
   tags: string[];
 };
 
-// An icon to represent each type of transaction
 const TxTypeIcon: Record<Transaction["tx_type"], LucideIcon> = {
   coinbase: BlocksIcon,
   token_transfer: ArrowLeftRightIcon,
@@ -85,14 +82,15 @@ function getTransactionInformationByType(
     tags: [],
   };
 }
+
 export function TransactionDetail({ result }: TransactionDetailProps) {
   const Icon = TxTypeIcon[result.tx.tx_type];
   const { primaryTitle, secondaryTitle, tags } =
     getTransactionInformationByType(result);
 
   return (
-    <div className="flex flex-col items-start p-4 border-l-2 border-transparent hover:border-blue-500 transition-all gap-4">
-      <div className="flex items-center gap-4 w-full">
+    <div className="flex flex-col p-4 border-l-2 border-transparent hover:border-blue-500 transition-all gap-4 md:flex-row md:items-start">
+      <div className="flex items-center gap-4 w-full md:w-1/2">
         <Icon className="h-10 w-10 rounded-full p-2 border border-gray-700 flex-shrink-0" />
 
         <div className="flex flex-col gap-2 w-full">
@@ -124,7 +122,7 @@ export function TransactionDetail({ result }: TransactionDetailProps) {
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row items-start md:items-center gap-2 w-full md:w-auto">
+      <div className="flex flex-col md:flex-row items-start md:items-center gap-2 w-full md:w-1/2 md:justify-end">
         <div className="flex items-center gap-2 flex-wrap justify-start text-xs">
           <span className="whitespace-nowrap">
             {abbreviateTxnId(result.tx.tx_id)}
