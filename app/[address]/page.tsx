@@ -1,7 +1,6 @@
 import { ExternalLinkIcon } from "lucide-react";
 import Link from "next/link";
 import { TransactionsList } from "@/components/txns-list";
-import { fetchAddressBalance } from "@/lib/fetch-address-balance";
 import { fetchAddressTransactions } from "@/lib/fetch-address-transactions";
 
 export default async function Activity({
@@ -12,7 +11,6 @@ export default async function Activity({
   const { address } = await params;
 
   const initialTransactions = await fetchAddressTransactions({ address });
-  const balance = await fetchAddressBalance(address);
 
   return (
     <main className="flex flex-col p-8 gap-8">
