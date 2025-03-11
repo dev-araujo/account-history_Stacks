@@ -13,5 +13,4 @@ export default function Home() {
       </main>
     );
   }
-  redirect(`/${userData.profile.stxAddress.mainnet}`);
 }

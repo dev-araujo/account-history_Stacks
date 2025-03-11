@@ -14,27 +14,35 @@ export function Navbar() {
   const pathname = usePathname();
   const [searchAddress, setSearchAddress] = useState(ADDRESS_WALLET_MOCK);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const { userData, connectWallet, disconnectWallet } = useStacks();
 
   const currentAddress = pathname.split("/")[1];
 
   useEffect(() => {
-    if (currentAddress) {
-      setSearchAddress(currentAddress);
+    if (!currentAddress && searchAddress === ADDRESS_WALLET_MOCK) {
+      setIsLoading(true);
+
+      handleSearch();
     }
-  }, [currentAddress]);
+  }, [currentAddress, searchAddress, router]);
 
   function handleSearch() {
     if (!searchAddress.startsWith("SP")) {
-      return alert("Please enter a mainnet Stacks address");
+      alert("Please enter a mainnet Stacks address");
+      return;
     }
+
+    setIsLoading(true);
+
     try {
       createAddress(searchAddress);
+      router.push(`/${searchAddress}`);
     } catch (error) {
-      return alert(`Invalid Stacks address entered ${error}`);
+      alert(`Invalid Stacks address entered: ${error}`);
+    } finally {
+      setIsLoading(false);
     }
-    router.push(`/${searchAddress}`);
   }
 
   const toggleMenu = () => {
@@ -47,7 +55,7 @@ export function Navbar() {
         <Link href="/" className="text-2xl font-bold mr-4">
           Stacks Account History
         </Link>
-        <button className="md:hidden" onClick={toggleMenu}>
+        <button className="md:hidden" onClick={toggleMenu} disabled={isLoading}>
           <svg
             className="h-6 w-6"
             fill="none"
@@ -72,11 +80,13 @@ export function Navbar() {
             : "hidden md:flex"
         } items-center gap-4 md:static md:bg-transparent md:p-0 md:z-0 md:flex-row md:w-auto justify-center`}
       >
-        <div className="flex-grow md:max-w-md">
+        <div className="flex-grow md:max-w-md relative">
           <input
             type="text"
             placeholder="your address wallet here SP..."
-            className="w-full rounded-lg bg-gray-700 px-4 py-2 text-sm"
+            className={`w-full rounded-lg bg-gray-700 px-4 py-2 text-sm ${
+              isLoading ? "animate-pulse opacity-75" : ""
+            }`}
             value={searchAddress}
             onChange={(e) => setSearchAddress(e.target.value)}
             onKeyDown={(e) => {
@@ -84,6 +94,7 @@ export function Navbar() {
                 handleSearch();
               }
             }}
+            disabled={isLoading}
           />
         </div>
 
@@ -96,6 +107,7 @@ export function Navbar() {
                   router.push(`/${userData.profile.stxAddress.mainnet}`)
                 }
                 className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap"
+                disabled={isLoading}
               >
                 View {abbreviateAddress(userData.profile.stxAddress.mainnet)}
               </button>
@@ -103,6 +115,7 @@ export function Navbar() {
                 type="button"
                 onClick={disconnectWallet}
                 className="rounded-lg bg-red-500 px-12 py-2 text-sm font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 whitespace-nowrap"
+                disabled={isLoading}
               >
                 Disconnect
               </button>
@@ -111,7 +124,8 @@ export function Navbar() {
             <button
               type="button"
               onClick={connectWallet}
-              className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap"
+              className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap disabled:bg-blue-300 disabled:opacity-60 disabled:cursor-not-allowed"
+              disabled={isLoading}
             >
               Connect Wallet
             </button>
